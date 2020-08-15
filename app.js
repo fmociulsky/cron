@@ -7,7 +7,7 @@ const fs = require("fs");
 
 app = express();
 
-//cron.schedule('*/10 * * * * *', parsearHTML);
+cron.schedule('*/10 * * * * *', parsearHTML);
 
 function parsearHTML() {
     request({uri: "http://www.turismocity.com.ar"}, 
