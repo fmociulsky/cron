@@ -11,11 +11,13 @@
   "license": "ISC",
   "dependencies": {
     "date-format": "^3.0.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "google-spreadsheet": "^3.0.11",
     "node-cron": "^2.0.3",
     "node-html-parser": "^1.2.20",
+    "nodemailer": "^6.4.11",
     "request": "^2.88.2"
   }
 }
