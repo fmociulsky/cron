@@ -27,7 +27,7 @@ function parsearHTML() {
         function(error, response, body) {
             const dt = new Date();
             dt.setHours( dt.getHours() - 3);
-            const fecha = format("dd-MM-yyyy hh:mm:ss",new Date());
+            const fecha = format("dd-MM-yyyy hh:mm:ss",dt);
             const root = parser.parse(body);
             const figures = root.querySelectorAll("figure");
             const rows = [];
