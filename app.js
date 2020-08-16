@@ -8,7 +8,7 @@ const creds = require('./client_secret.json');
 const {promisify} = require('util');
 app = express();
 
-cron.schedule('*/5 * * * * ', parsearHTML);
+//cron.schedule('*/5 * * * * ', parsearHTML);
 
 function parsearHTML() {
     request({uri: "http://www.turismocity.com.ar"}, 
