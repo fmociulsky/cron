@@ -25,6 +25,8 @@ function parsearHTML() {
     console.log("Buscando en la url: " + url);
     request({uri: url}, 
         function(error, response, body) {
+            const dt = new Date();
+            dt.setHours( dt.getHours() - 3);
             const fecha = format("dd-MM-yyyy hh:mm:ss",new Date());
             const root = parser.parse(body);
             const figures = root.querySelectorAll("figure");
