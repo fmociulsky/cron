@@ -18,7 +18,7 @@ var transporter = nodemailer.createTransport({
     }
   });
 
-cron.schedule('*/1 * * * * ', parsearHTML);
+//cron.schedule('*/1 * * * * ', parsearHTML);
 
 function parsearHTML() {
     const url = process.env.URL;
