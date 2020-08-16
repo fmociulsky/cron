@@ -18,7 +18,7 @@ var transporter = nodemailer.createTransport({
     }
   });
 
-//cron.schedule('*/1 * * * * ', parsearHTML);
+cron.schedule('*/5 * * * * ', parsearHTML);
 
 function parsearHTML() {
     const url = process.env.URL;
@@ -29,7 +29,7 @@ function parsearHTML() {
             const root = parser.parse(body);
             const figures = root.querySelectorAll("figure");
             const rows = [];
-            if(figures.length == 0){
+            if(figures.length > 0){
                 for (let index = 0; index < figures.length; index++) {
                     const spans = figures[index].querySelectorAll("span");
                     if(spans.length > 0){
