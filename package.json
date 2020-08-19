@@ -1,8 +1,10 @@
 {
   "name": "cron",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "14.0.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
@@ -22,5 +24,15 @@
     "nodemailer": "^6.4.11",
     "puppeteer": "^5.2.1",
     "request": "^2.88.2"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fmociulsky/cron.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fmociulsky/cron/issues"
+  },
+  "homepage": "https://github.com/fmociulsky/cron#readme",
+  "description": ""
 }
