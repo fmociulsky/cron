@@ -1,4 +1,6 @@
 const parser = require("node-html-parser");
+const puppeteer = require('puppeteer');
+const googleSheetsUtils = require('./googleSheetsUtils');
 
 function obtenerH2Promos(body){
     const root = parser.parse(body);
@@ -34,4 +36,55 @@ function getMultiRow(spans, fecha){
     return rowObj;
 }
 
-module.exports = {obtenerH2Promos, getGenRow, getMultiRow}
+async function getPromoGraph(urlPromo, row, isMulti, isOneWay) {
+    try {
+      const parser = require("node-html-parser");
+      const browser = await puppeteer.launch();
+      const [page] = await browser.pages();
+      const rowsGen = [];
+      const rowsMulti = [];
+      await page.goto(urlPromo, { waitUntil: 'networkidle0' });
+      const data = await page.evaluate(() => document.querySelector('#priceBarChart').outerHTML);
+      const ps = parser.parse(data).querySelectorAll("p");
+      const spans = parser.parse(data).querySelectorAll("span");
+      for (let i = 0; i < ps.length; i++) {
+        const precio = ps[i].text.replace('Desde $ ','').replace('.','');
+        const mes = spans[i].getAttribute("title");
+        const rowAux = {
+            
+        }
+        rowAux.Mes = mes;
+        rowAux.Precio = precio;
+        
+        if(isMulti){
+            const rowAux = {
+                Fecha: row.Fecha,
+                IdaDesde: row.IdaDesde,
+                IdaHasta: row.IdaHasta,
+                VueltaDesde: row.VueltaDesde,
+                VueltaHasta: row.VueltaHasta,
+                Precio: precio,
+                Mes: mes
+            }
+            rowsMulti.push(rowAux);
+          }else{
+            const rowAux = {
+                Fecha: row.Fecha,
+                Desde: row.Desde,
+                Hasta: row.Hasta,
+                IdaSola: row.IdaSola,
+                Precio: precio,
+                Mes: mes
+            }
+            rowsGen.push(rowAux);
+          }
+      }
+      await googleSheetsUtils.guardarDetalleMultiRow(rowsMulti);
+      await googleSheetsUtils.guardarDetalleGenRow(rowsGen);
+      await browser.close();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+module.exports = {obtenerH2Promos, getGenRow, getMultiRow, getPromoGraph}

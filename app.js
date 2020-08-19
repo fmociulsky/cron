@@ -3,13 +3,15 @@ const express = require("express");
 const request = require("request");
 const format = require('date-format');
 const {promisify} = require('util');
+const parser = require("node-html-parser");
 const parserHtml = require('./parserHtml');
 const googleSheetsUtils = require('./googleSheetsUtils');
 const mailUtils = require('./mailUtils');
 require('dotenv').config();
 app = express();
 
-//parsearHTML();
+
+parsearHTML();
 //cron.schedule('*/5 * * * * ', parsearHTML);
 
 function parsearHTML() {
@@ -18,7 +20,9 @@ function parsearHTML() {
     request({uri: url}, 
         function(error, response, body) {
             const rowsGen = [];
+            const rowsGenDetailPromo = [];
             const rowsMulti = [];
+            const rowsMultiDetailPromo = [];
             const dt = new Date();
             dt.setHours( dt.getHours() - 3);
             const fecha = format("dd-MM-yyyy hh:mm:ss",dt);
@@ -34,20 +38,26 @@ function parsearHTML() {
                 if(spans.length > 0){
                   if(isMulti && !isOneWay){
                     const rowObj = parserHtml.getMultiRow(spans, fecha);
-                    //guardarDetallesPromo(a)
                     rowsMulti.push(rowObj);
+                    getDetallesPromoRow(a, rowObj, true, false);
                   }else{
                     const rowObj = parserHtml.getGenRow(spans, fecha, isOneWay);
                     rowsGen.push(rowObj);
-                  } 
+                    getDetallesPromoRow(a, rowObj, false, isOneWay);
+                  }
                 } 
               }
-              googleSheetsUtils.guardarGenRows(rowsGen);
-              googleSheetsUtils.guardarMultiRows(rowsMulti);
+              //googleSheetsUtils.guardarGenRows(rowsGen);
+              //googleSheetsUtils.guardarMultiRows(rowsMulti);
             }else{
               mailUtils.enviarMailError();
             }
     });
+}
+
+async function getDetallesPromoRow(a, row, isMulti, isOneWay){
+  const urlPromo = process.env.URL + a.rawAttrs.replace('href="','').replace('"','')
+  await parserHtml.getPromoGraph(urlPromo, row, isMulti, isOneWay);
 }
 
 
@@ -56,8 +66,6 @@ const port = process.env.PORT || 5000
 app.listen(port, () =>  {
     console.log('Servidor escuchando en el puerto ' + port)
 });
-
-
 
 
 
