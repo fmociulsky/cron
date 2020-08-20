@@ -39,7 +39,7 @@ function getMultiRow(spans, fecha){
 async function getPromoGraph(urlPromo, row, isMulti, isOneWay) {
     try {
       const parser = require("node-html-parser");
-      /*const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+      const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
       const [page] = await browser.pages();
       const rowsGen = [];
       const rowsMulti = [];
@@ -82,7 +82,7 @@ async function getPromoGraph(urlPromo, row, isMulti, isOneWay) {
       await googleSheetsUtils.guardarDetalleMultiRow(rowsMulti);
       await googleSheetsUtils.guardarDetalleGenRow(rowsGen);
       await browser.close();
-    */
+    
     } catch (err) {
       console.error(err);
     }
