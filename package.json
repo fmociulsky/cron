@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "engines": {
-    "node": "13.x"
+    "node": "14.1.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
