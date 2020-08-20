@@ -12,7 +12,7 @@ require('dotenv').config();
 app = express();
 
 
-//parsearHTML();
+parsearHTML();
 //cron.schedule('*/5 * * * * ', parsearHTML);
 
 function parsearHTML() {
