@@ -22,18 +22,33 @@ function getGenRow(spans, fecha, isOneWay){
 }
 
 function getMultiRow(spans, fecha){
-    const desde = spans[0].text.replace('\n','').replace('\n','').trim().split(" - ");
-    const hasta = spans[1].text.replace('\n','').replace('\n','').trim().split(" - ");
-    const rowObj = {
+    if(spans[0].text.includes("+")){
+      titulo1 = spans[0].text.replace('\n','').replace('\n','').trim().split(" + ");
+      titulo2 = spans[1].text.replace('\n','').replace('\n','').replace('Desde ', '').trim();
+      const rowObj = {
         Fecha: fecha,
-        IdaDesde: desde[0],
-        IdaHasta: desde[1],
-        VueltaDesde: hasta[0],
-        VueltaHasta: hasta[1],
-        Precio: spans[2].text.replace('\n','').replace('\n','').replace('$','').replace('.','').trim() 
+        IdaDesde: titulo2,
+        IdaHasta: titulo1[0],
+        VueltaDesde: titulo1[1],
+        VueltaHasta: titulo2,
+        Precio: spans[2].text.replace('\n','').replace('\n','').replace('$','').replace('.','').trim(),
+        Multitramo: 'SI' 
+      }
+      return rowObj;
+    }else{
+      const desde = spans[0].text.replace('\n','').replace('\n','').trim().split(" - ");
+      const hasta = spans[1].text.replace('\n','').replace('\n','').trim().split(" - ");
+      const rowObj = {
+          Fecha: fecha,
+          IdaDesde: desde[0],
+          IdaHasta: desde[1],
+          VueltaDesde: hasta[0],
+          VueltaHasta: hasta[1],
+          Precio: spans[2].text.replace('\n','').replace('\n','').replace('$','').replace('.','').trim(),
+          Multitramo: 'NO' 
+      }
+      return rowObj;
     }
-
-    return rowObj;
 }
 
 async function getPromoGraph(urlPromo, row, isMulti, isOneWay) {
