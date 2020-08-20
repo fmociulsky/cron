@@ -7,6 +7,7 @@ const parser = require("node-html-parser");
 const parserHtml = require('./parserHtml');
 const googleSheetsUtils = require('./googleSheetsUtils');
 const mailUtils = require('./mailUtils');
+require('events').EventEmitter.defaultMaxListeners = 25
 require('dotenv').config();
 app = express();
 
