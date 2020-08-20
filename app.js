@@ -12,7 +12,7 @@ require('dotenv').config();
 app = express();
 
 
-parsearHTML();
+//parsearHTML();
 //cron.schedule('*/5 * * * * ', parsearHTML);
 
 function parsearHTML() {
@@ -40,16 +40,16 @@ function parsearHTML() {
                   if(isMulti && !isOneWay){
                     const rowObj = parserHtml.getMultiRow(spans, fecha);
                     rowsMulti.push(rowObj);
-                    getDetallesPromoRow(a, rowObj, true, false);
+                    //getDetallesPromoRow(a, rowObj, true, false);
                   }else{
                     const rowObj = parserHtml.getGenRow(spans, fecha, isOneWay);
                     rowsGen.push(rowObj);
-                    getDetallesPromoRow(a, rowObj, false, isOneWay);
+                    //getDetallesPromoRow(a, rowObj, false, isOneWay);
                   }
                 } 
               }
-              //googleSheetsUtils.guardarGenRows(rowsGen);
-              //googleSheetsUtils.guardarMultiRows(rowsMulti);
+              googleSheetsUtils.guardarGenRows(rowsGen);
+              googleSheetsUtils.guardarMultiRows(rowsMulti);
             }else{
               mailUtils.enviarMailError();
             }
