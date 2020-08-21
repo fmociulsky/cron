@@ -12,8 +12,9 @@ require('dotenv').config();
 app = express();
 
 
-parsearHTML();
+//parsearHTML();
 //cron.schedule('*/5 * * * * ', parsearHTML);
+parserHtml.pruebaPuppeter('https://www.turismocity.com.ar/vuelos-baratos-dos-tramos-SAO-ROM,LIS-BUE');
 
 function parsearHTML() {
     const url = process.env.URL;

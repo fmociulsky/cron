@@ -51,6 +51,42 @@ function getMultiRow(spans, fecha){
     }
 }
 
+async function pruebaPuppeter(urlPromo) {
+  console.log('pruebaPuppeter');
+  try {
+    const parser = require("node-html-parser");
+    const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+    const [page] = await browser.pages();
+    const rowsGen = [];
+    const rowsMulti = [];
+    const rows = []
+    await page.goto(urlPromo, { waitUntil: 'networkidle0' });
+    const data = await page.evaluate(() => document.querySelector('#priceBarChart').outerHTML);
+    const ps = parser.parse(data).querySelectorAll("p");
+    const spans = parser.parse(data).querySelectorAll("span");
+    const rowAux = {};
+    for (let i = 0; i < ps.length; i++) {
+      const precio = ps[i].text.replace('Desde $ ','').replace('.','');
+      const mes = spans[i].getAttribute("title");
+      const rowAux = {
+        Fecha: "a",
+        IdaDesde: "b",
+        IdaHasta: "c",
+        VueltaDesde: "d",
+        VueltaHasta: "e",
+        Precio: precio,
+        Mes: mes
+      }
+      rows.push(rowAux);
+    }
+    debugger
+    await googleSheetsUtils.guardarDetalleMultiRow(rows);
+  }catch (err) {
+    console.error(err);
+  }
+}
+
+
 async function getPromoGraph(urlPromo, row, isMulti, isOneWay) {
     try {
       const parser = require("node-html-parser");
@@ -103,4 +139,4 @@ async function getPromoGraph(urlPromo, row, isMulti, isOneWay) {
     }
   }
 
-module.exports = {obtenerH2Promos, getGenRow, getMultiRow, getPromoGraph}
+module.exports = {obtenerH2Promos, getGenRow, getMultiRow, getPromoGraph, pruebaPuppeter}

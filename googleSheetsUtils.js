@@ -37,6 +37,7 @@ async function guardarDetalleGenRow(rows){
 
 async function guardarDetalleMultiRow(rows){
   console.log("Guardo Detalle Multi");
+  console.log(rows[0]);
   const doc = new GoogleSpreadsheet('1lNBn7QkHY7h62rJCUd2nvHrnGefyUwcw5j6_hJczBnM');
   await doc.useServiceAccountAuth({
       client_email: creds.client_email,
