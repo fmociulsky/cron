@@ -79,8 +79,8 @@ async function pruebaPuppeter(urlPromo) {
       }
       rows.push(rowAux);
     }
-    debugger
     await googleSheetsUtils.guardarDetalleMultiRow(rows);
+    browser.close();
   }catch (err) {
     console.error(err);
   }
