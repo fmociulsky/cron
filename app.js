@@ -11,20 +11,20 @@ require('events').EventEmitter.defaultMaxListeners = 25
 require('dotenv').config();
 app = express();
 
-
+const rowsGenDetailPromo = [];
+const rowsMultiDetailPromo = [];
+parsearMainPageHTML();
 //parsearHTML();
 //cron.schedule('*/5 * * * * ', parsearHTML);
-parserHtml.pruebaPuppeter('https://www.turismocity.com.ar/vuelos-baratos-dos-tramos-SAO-ROM,LIS-BUE');
+//parserHtml.pruebaPuppeter('https://www.turismocity.com.ar/vuelos-baratos-dos-tramos-SAO-ROM,LIS-BUE');
 
-function parsearHTML() {
+function parsearMainPageHTML() {
     const url = process.env.URL;
     console.log("Buscando en la url: " + url);
     request({uri: url}, 
         function(error, response, body) {
             const rowsGen = [];
-            const rowsGenDetailPromo = [];
             const rowsMulti = [];
-            const rowsMultiDetailPromo = [];
             const dt = new Date();
             dt.setHours( dt.getHours() - 3);
             const fecha = format("dd-MM-yyyy hh:mm:ss",dt);
@@ -40,17 +40,15 @@ function parsearHTML() {
                 if(spans.length > 0){
                   if(isMulti && !isOneWay){
                     const rowObj = parserHtml.getMultiRow(spans, fecha);
-                    rowsMulti.push(rowObj);
-                    //getDetallesPromoRow(a, rowObj, true, false);
+                    rowsMulti.push({a, rowObj});
                   }else{
                     const rowObj = parserHtml.getGenRow(spans, fecha, isOneWay);
-                    rowsGen.push(rowObj);
-                    //getDetallesPromoRow(a, rowObj, false, isOneWay);
+                    rowsGen.push({a, rowObj});
                   }
                 } 
               }
               googleSheetsUtils.guardarGenRows(rowsGen);
-              googleSheetsUtils.guardarMultiRows(rowsMulti);
+              //googleSheetsUtils.guardarMultiRows(rowsMulti);
             }else{
               mailUtils.enviarMailError();
             }

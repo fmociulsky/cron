@@ -51,53 +51,17 @@ function getMultiRow(spans, fecha){
     }
 }
 
-async function pruebaPuppeter(urlPromo) {
-  console.log('pruebaPuppeter');
-  try {
-    const parser = require("node-html-parser");
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-    const [page] = await browser.pages();
-    const rowsGen = [];
-    const rowsMulti = [];
-    const rows = []
-    await page.goto(urlPromo, { waitUntil: 'networkidle0' });
-    const data = await page.evaluate(() => document.querySelector('#priceBarChart').outerHTML);
-    const ps = parser.parse(data).querySelectorAll("p");
-    const spans = parser.parse(data).querySelectorAll("span");
-    const rowAux = {};
-    for (let i = 0; i < ps.length; i++) {
-      const precio = ps[i].text.replace('Desde $ ','').replace('.','');
-      const mes = spans[i].getAttribute("title");
-      const rowAux = {
-        Fecha: "a",
-        IdaDesde: "b",
-        IdaHasta: "c",
-        VueltaDesde: "d",
-        VueltaHasta: "e",
-        Precio: precio,
-        Mes: mes
-      }
-      rows.push(rowAux);
-    }
-    await googleSheetsUtils.guardarDetalleMultiRow(rows);
-    browser.close();
-  }catch (err) {
-    console.error(err);
-  }
-}
 
-
-async function getPromoGraph(urlPromo, row, isMulti, isOneWay) {
+async function getPromoGraph(browser, page, urlPromo, row, isMulti, isOneWay, i) {
     try {
       const parser = require("node-html-parser");
-      const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-      const [page] = await browser.pages();
       const rowsGen = [];
       const rowsMulti = [];
       await page.goto(urlPromo, { waitUntil: 'networkidle0' });
       const data = await page.evaluate(() => document.querySelector('#priceBarChart').outerHTML);
       const ps = parser.parse(data).querySelectorAll("p");
       const spans = parser.parse(data).querySelectorAll("span");
+      console.log("------- " + i + " Span encontrados: " + spans.length);
       for (let i = 0; i < ps.length; i++) {
         const precio = ps[i].text.replace('Desde $ ','').replace('.','');
         const mes = spans[i].getAttribute("title");
@@ -130,13 +94,25 @@ async function getPromoGraph(urlPromo, row, isMulti, isOneWay) {
             rowsGen.push(rowAux);
           }
       }
-      await googleSheetsUtils.guardarDetalleMultiRow(rowsMulti);
-      await googleSheetsUtils.guardarDetalleGenRow(rowsGen);
-      await browser.close();
-    
+      googleSheetsUtils.guardarDetalleMultiRow(rowsMulti);
+      googleSheetsUtils.guardarDetalleGenRow(rowsGen, i);
     } catch (err) {
       console.error(err);
     }
   }
 
-module.exports = {obtenerH2Promos, getGenRow, getMultiRow, getPromoGraph, pruebaPuppeter}
+  async function parsearPromos(rows){
+    let i = 1;
+
+    rows.forEach(async row => {
+      const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+      const page = await browser.newPage();
+      const parserHtml = require('./parserHtml');
+      const urlPromo = process.env.URL + row.a.rawAttrs.replace('href="','').replace('"','')
+      console.log(i + " - " + urlPromo);
+      getPromoGraph(browser, page, urlPromo, row.rowObj, false, row.rowObj.isOneWay == 'SI', i);
+      i++;
+    });
+  }
+
+module.exports = {obtenerH2Promos, getGenRow, getMultiRow, getPromoGraph, parsearPromos}
